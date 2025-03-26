@@ -1,0 +1,95 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+ 
+ const int TOT_CURRENCY = 10; 
+//Declaring limit on currency, which can be increased if needed
+const string currency_name[TOT_CURRENCY] =
+{
+"AED: Emeriti Dhiram",
+"INR: Indian Rupee.",
+"USD: US Dollar",
+"GBP: Britch Pound",
+"EUR: Euro",
+"AUD: Australian Dollar.",
+"JOD: Jordanian Dinar",
+"TRY: Turkish Lira",
+"PHP: Philippine Peso",
+"KWD: Kuwaiti Dinar"
+
+                                                                        };
+
+// exchange rates
+
+// Declaring exchange rates in form of matrix 1st set is for AED: Emeriti Dhiram similarly 3rd set is for USD: US Dollar so on..
+
+ 
+
+const double exchange_rate[TOT_CURRENCY][TOT_CURRENCY] =
+
+{ {1,22.65,0.27,0.22,0.26,0.42,0.19,7.55,15.46,0.084}, // AED to other currency exchange rates
+
+{0.044,1,0.012,0.0098,0.011,0.019,0.000045,0.33,0.68,0.0037}, // INR to other currency exchange rates
+
+{3.67,83.18,1,0.81,0.94,1.55,0.71,27.73,56.78,0.31}, // USD to other currency exchange rates
+
+{4.51,102.20,1.23,1,1.16,1.91,0.87,34.07,69.77,0.38}, // GBP to other currency exchange rates
+
+{3.90,88.35,1.06,0.86,1,1.65,0.75,29.40,60.22,0.33}, // EUR to other currency exchange rates
+
+{2.36,53.48,0.64,0.52,0.61,1,0.46,17.83,36.52,0.20}, // AUD to other currency exchange rates
+
+{5.18,117.24,1.41,1.15,1.33,2.19,1,39.08,80.03,0.44}, // JOD to other currency exchange rates
+
+ {0.13 ,3.00,0.036,0.029,0.034,0.056,0.026,1,2.05,0.011}, // TRY to other currency exchange rates
+
+{0.065,1.47,0.018,0.014,0.017,0.027,0.012,0.49,1,0.0054}, // PHP to other currency exchange rates
+
+{11.88,269.09,3.23,2.63,3.05,5.03,2.29,89.68,183.67,1}, // KWD to other currency exchange rates
+
+                                                                    };
+int main()
+
+{
+ int currency_1 = 0, value = 0, currency_2 = 0;
+ //Defining base values to zero
+  double rate = 0;
+cout << "Note: *Market exchange rate values accurate as of 27/11/2021* (DD/MM/YYYY) \n" << endl;
+
+    while (true)
+
+    { cout << "List of Currencies:" << endl;
+
+ cout << "---------------------" << endl;
+
+   for (int i=0; i<TOT_CURRENCY; i++)
+
+    cout << i+1 << ". " << currency_name[i] << endl;
+
+ cout << "\n******Choose each currency by giving corresponding index value.******\n\n";
+
+ cout << "What currency you would like to Convert ? ";
+
+ cin >> currency_1;
+
+  currency_1--;
+
+   cout << "You have selected " << currency_name[currency_1] << endl;
+
+    cout << "What currency you would like to Convert to ? ";
+
+     cin >> currency_2;
+
+        currency_2--;
+cout << "You have chosen " << currency_name[currency_2] << endl;
+    cout << "How much money would you like to convert ? " << endl;
+    cin >> value;
+  cout << "You have chosen " << value << currency_name[currency_1] << endl;
+  rate = value * exchange_rate[currency_1][currency_2]; //Actual calculation
+ cout << value << " " << currency_name[currency_1]
+<< " = " << rate << currency_name[currency_2] << endl;
+                      };
+
+                                           return 0;
+                                                      }
