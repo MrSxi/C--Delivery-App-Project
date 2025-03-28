@@ -43,7 +43,7 @@ void printMenu() {
     }
 }
 
-// Noor's functions
+
 int addCourse(string courses[], int coursesCount) {
     string courseName = input("Enter course name: ");
     // Check if course already exists
