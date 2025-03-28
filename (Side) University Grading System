@@ -1,0 +1,364 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+// General functions
+string input(string prompt) {
+    cout << prompt;
+    string response;
+    cin >> response;
+    return response;
+}
+
+int inputGrade(string prompt) {
+    while (true) {
+        cout << prompt;
+        int response;
+        cin >> response;
+
+        if (response < 0 || response > 100) {
+            cout << "You can't enter a grade less than 0 or greater than 100. Try again." << endl;
+            continue;
+        }
+        else {
+            return response;
+        }
+    }
+}
+
+void printMenu() {
+    string menu[9] = {
+        "Enter 1 to add new course\n",
+        "Enter 2 to remove a course\n",
+        "Enter 3 to add new student\n",
+        "Enter 4 to calculate the average grade of a course\n",
+        "Enter 5 to calculate the average grade of a student\n",
+        "Enter 6 to show all available courses and students\n",
+        "Enter 7 to show grade of one student in a particular course\n",
+        "\n", // This is to separate the user input and the menu output by an extra empty line, just looks
+        ">>> ", // User input goes here next to it
+    };
+    for (int i = 0; i < 9; i++) {
+        cout << menu[i];
+    }
+}
+
+// Noor's functions
+int addCourse(string courses[], int coursesCount) {
+    string courseName = input("Enter course name: ");
+    // Check if course already exists
+    for (int a = 0; a < coursesCount; a++) {
+        if (courses[a] == courseName) {
+            cout << "Course already exists." << endl;
+            return coursesCount;
+        }
+    }
+
+    courses[coursesCount] = courseName;
+    return coursesCount + 1;
+}
+
+int deleteCourse(string courses[], int coursescount) {
+    string coursename = input("Enter course name: ");
+    int courseIndex = -1;
+
+    // Find the course
+    for (int a = 0; a < coursescount; a++) {
+        if (courses[a] == coursename) {
+            courseIndex = a;
+            break; // Add break to exit loop once course is found
+        }
+    }
+
+    // Say error if not found
+    if (courseIndex == -1) {
+        cout << "Course not found." << endl;
+        return coursescount;
+    }
+
+    // Shift courses to remove the deleted course
+    for (int i = courseIndex; i < coursescount - 1; i++) {
+        courses[i] = courses[i + 1];
+    }
+    return coursescount - 1;
+}
+
+int addStudent(string students[], int studentscount) {
+    string studentname = input("Enter student name: ");
+    // Check if student already exists
+    for (int i = 0; i < studentscount; i++) {
+        if (students[i] == studentname) {
+            cout << "Student already exists." << endl;
+            return studentscount;
+        }
+    }
+
+    students[studentscount] = studentname;
+    return studentscount + 1;
+}
+
+int main() {
+    int choice = 0;
+    int courseCount = 0;
+    int studentCount = 0;
+
+    string courses[100];
+    string students[100];
+    double grades[100][100];
+    
+    cout << "Welcome to my grade management system! \n";
+
+    while (choice != -1) {
+        printMenu();
+        cin >> choice;
+        
+        switch (choice) {
+            case 1: { // Add course
+                courseCount = addCourse(courses, courseCount);
+
+                // If theres no students just skip
+                if (studentCount == 0) {
+                    break;
+                }
+
+                // Otherwise log the grade
+                for (int a = 0; a < studentCount; a++) {
+                    int tempGrade;
+                    tempGrade = inputGrade("Enter the grade of the course for student " + students[a] + ": ");
+
+                    if (tempGrade == 0) {
+                        tempGrade = -1; // 0 is skipped in later parts because of null elements so this is set to -1 and when printing it will be printed as 0
+                    }
+
+                    grades[courseCount - 1][a] = tempGrade;
+                }
+
+                break;
+            }
+            case 2: { // Remove course
+                if (courseCount == 0) {
+                    cout << "No courses available to remove." << endl;
+                    break;
+                }
+
+                string courseToRemove = input("Enter the name of the course to remove: ");
+
+                int courseIndexToRemove = -1;
+                // Find the index of the course
+                for (int i = 0; i < courseCount; ++i) {
+                    if (courses[i] == courseToRemove) {
+                        courseIndexToRemove = i;
+                        break;
+                    }
+                }
+
+                if (courseIndexToRemove == -1) {
+                    cout << "Course not found." << endl;
+                    break;
+                }
+
+                // Remove the course
+                for (int i = courseIndexToRemove; i < courseCount - 1; ++i) {
+                    courses[i] = courses[i + 1];
+                    // Shift the grades to maintain consistency
+                    for (int j = 0; j < studentCount; ++j) {
+                        grades[i][j] = grades[i + 1][j];
+                    }
+                }
+                courseCount--;
+
+                break;
+            }
+            case 3: { // Add student
+                if (courseCount == 0) {
+                    cout << "No courses available to add student to." << endl;
+                    break;
+                }
+
+                studentCount = addStudent(students, studentCount);
+
+                // Add grades for the new student
+                for (int i = 0; i < courseCount; ++i) {
+                    double tempGrade;
+                    tempGrade = inputGrade("Enter the grade of the course for student " + students[studentCount - 1] + ": ");
+
+                    if (tempGrade == 0) {
+                        tempGrade = -1; // 0 is skipped in later parts because of null elements so this is set to -1 and when printing it will be printed as 0
+                    }
+                    grades[i][studentCount - 1] = tempGrade;
+                }
+
+                break;
+            }
+            case 4: {
+                if (courseCount == 0) {
+                    cout << "No courses available to calculate average grade." << endl;
+                    break;
+                }
+
+                string courseName = input("Enter course name: ");
+                int courseIndex = -1;
+
+                // Find the course
+                for (int a = 0; a < courseCount; a++) {
+                    if (courses[a] == courseName) {
+                        courseIndex = a;
+                        break;
+                    }
+                }
+
+                // Say error if not found
+                if (courseIndex == -1) {
+                    cout << "Course not found." << endl;
+                    break;
+                }
+
+                // Loop over every grade in the course and add it to the sum of the course grades
+                double courseGradesSum = 0;
+                int validGradesCount = 0; // Count of valid grades (grades that are not 0)
+                for (int b = 0; b < studentCount; b++) {
+                    double grade = grades[courseIndex][b];
+                    if (grade != 0) { // Skip null elements
+                        if (grade == -1) { // Change to 0 because -1 is set by program as alternative to 0 in user's input
+                            grade = 0;
+                        }
+                        courseGradesSum += grade;
+                        validGradesCount++;
+                    }
+                }
+
+                // Check if there are valid grades to avoid division by zero
+                if (validGradesCount == 0) {
+                    cout << "No grades available for this course." << endl;
+                }
+                else {
+                    // Calculate and print the average grade of the course
+                    double courseGradesAverage = courseGradesSum / validGradesCount;
+                    cout << "Average grade of course " << courses[courseIndex] << " is: " << courseGradesAverage << endl;
+                }
+
+                break;
+            }
+            case 5: {
+                if (studentCount == 0) {
+                    cout << "No students available to calculate average grade." << endl;
+                    break;
+                }
+
+                string studentName = input("Enter student name: ");
+                int studentIndex = -1;
+
+                // Find the student
+                for (int a = 0; a < studentCount; a++) {
+                    if (students[a] == studentName) {
+                        studentIndex = a;
+                        break;
+                    }
+                }
+
+                // Say error if not found
+                if (studentIndex == -1) {
+                    cout << "Student not found." << endl;
+                    break;
+                }
+
+                // Loop over every grade of the student and add it to the sum of the student grades
+                double studentGradesSum = 0;
+                int validGradesCount = 0; // Count of valid grades (grades that are not 0)
+                for (int c = 0; c < courseCount; c++) {
+                    double grade = grades[c][studentIndex];
+                    if (grade != 0) { // Skip null elements
+                        if (grade == -1) { // Change to 0 because -1 is set by program as alternative to 0 in user's input
+                            grade = 0;
+                        }
+                        studentGradesSum += grade;
+                        validGradesCount++;
+                    }
+                }
+
+                // Check if there are valid grades to avoid division by zero
+                if (validGradesCount == 0) {
+                    cout << "No grades available for this student." << endl;
+                }
+                else {
+                    // Calculate and print the average grade of the student
+                    double studentGradesAverage = studentGradesSum / validGradesCount;
+                    cout << "Average grade of student " << students[studentIndex] << " is: " << studentGradesAverage << endl;
+                }
+
+                break;
+            }
+            case 6: {
+                // Print header
+                cout << setw(20) << "";
+                for (int i = 0; i < courseCount; ++i) {
+                    cout << setw(20) << courses[i];
+                }
+                cout << endl;
+
+                // Print grades
+                for (int j = 0; j < studentCount; ++j) {
+                    cout << setw(20) << students[j];
+                    for (int i = 0; i < courseCount; ++i) {
+                        double grade = grades[i][j];
+                        if (grade == -1) {
+                            grade = 0;
+                        }
+                        cout << setw(20) << grade;
+                    }
+                    cout << endl;
+                }
+
+                break;
+            }
+            case 7: {
+                // Ask for student name and course name
+                string studentName = input("Enter the name of the student: ");
+
+                // Find the correct index of the student
+                int studentIndex = -1;
+                for (int i = 0; i < studentCount; ++i) {
+                    if (students[i] == studentName) {
+                        studentIndex = i;
+                        break;
+                    }
+                }
+
+                // Don't continue if the student was not found
+                if (studentIndex == -1) {
+                    cout << "Student '" << studentName << "' not found." << endl;
+                    break;
+                }
+
+                string courseName = input("Enter the name of the course: ");
+
+                // Find the correct index of the student
+                int courseIndex = -1;
+                for (int i = 0; i < courseCount; ++i) {
+                    if (courses[i] == courseName) {
+                        courseIndex = i;
+                        break;
+                    }
+                }
+
+                // Don't continue if the course was not found
+                if (courseIndex == -1) {
+                    cout << "Course '" << courseName << "' not found." << endl;
+                    break;
+                }
+
+                // Print the grade of the student in that specific course
+                double grade = grades[courseIndex][studentIndex];
+                if (grade == -1) {
+                    grade = 0;
+                }
+                cout << "Grade of student '" << studentName << "' in course '" << courseName << "': " << grade << endl;
+                break;
+            }
+            default:
+                cout << "Invalid option \n";
+            }
+    }
+
+    return 0;
+}
